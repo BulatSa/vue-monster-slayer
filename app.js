@@ -80,7 +80,7 @@ const app = Vue.createApp({
       } else {
         this.playerHealth += healValue;
       }
-      this.addLogMessage("player", "heal", healValue);
+git remote add origin https://github.com/BulatSa/vue-monster-slayer.git      this.addLogMessage("player", "heal", healValue);
       this.attackPlayer();
     },
     surrender() {
