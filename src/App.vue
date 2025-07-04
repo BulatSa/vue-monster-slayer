@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeMount } from 'vue'
 import Container from './components/Container.vue'
 import Controls from './components/Controls.vue'
 import Log from './components/Log.vue'
@@ -7,6 +8,11 @@ import Player from './components/Player.vue'
 import { useGameStore } from '@/stores/game';
 
 const gameStore = useGameStore();
+
+onBeforeMount(() => {
+  gameStore.init();
+})
+
 </script>
 
 <template>
