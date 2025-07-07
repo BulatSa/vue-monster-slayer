@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { useGameStore } from './game'
+import { useSettingsStore } from './settings';
 
 export const useActionStore = defineStore('action', () => {
   const game = useGameStore();
+  const settings = useSettingsStore()
 
   function init() {
     if (!localStorage.getItem("gameStore")) {
@@ -45,21 +47,21 @@ export const useActionStore = defineStore('action', () => {
 
   function attackMonster() {
     game.gameData.currentRound++
-    const attackValue = getRandomValue(5, 12)
+    const attackValue = getRandomValue(settings.player.attackRange.min, settings.player.attackRange.max)
     game.gameData.monsterHealth -= attackValue
     addLogMessage('player', 'attack', attackValue)
     attackPlayer()
   }
 
   function attackPlayer() {
-    const attackValue = getRandomValue(8, 15)
+    const attackValue = getRandomValue(settings.monster.attackRange.min, settings.monster.attackRange.max)
     game.gameData.playerHealth -= attackValue
     addLogMessage('monster', 'attack', attackValue)
   }
 
   function specialAttackMonster() {
     game.gameData.currentRound++
-    const attackValue = getRandomValue(10, 25)
+    const attackValue = getRandomValue(settings.player.specialAttackRange.min, settings.player.specialAttackRange.max)
     game.gameData.monsterHealth -= attackValue
     addLogMessage('player', 'attack', attackValue)
     attackPlayer()
@@ -67,9 +69,9 @@ export const useActionStore = defineStore('action', () => {
 
   function healPlayer() {
     game.gameData.currentRound++
-    const healValue = getRandomValue(8, 20)
-    if (game.gameData.playerHealth + healValue > 100) {
-      game.gameData.playerHealth = 100
+    const healValue = getRandomValue(settings.player.heal.min, settings.player.heal.max)
+    if (game.gameData.playerHealth + healValue > settings.player.heal.max) {
+      game.gameData.playerHealth = settings.player.heal.max
     } else {
       game.gameData.playerHealth += healValue
     }

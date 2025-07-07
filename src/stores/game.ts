@@ -51,12 +51,13 @@ export const useGameStore = defineStore('game', () => {
   })
 
   const resetData = () => {
-    gameData.playerHealth = 100;
-    gameData.monsterHealth = 100;
-    gameData.currentRound = 0;
-    gameData.winner = null;
-    gameData.logMessages = [];
-    game.resetData()
+    game.resetData();
+
+    gameData.playerHealth = game.data.playerHealth;
+    gameData.monsterHealth = game.data.monsterHealth;
+    gameData.currentRound = game.data.currentRound;
+    gameData.winner = game.data.winner;
+    gameData.logMessages = game.data.logMessages;
   }
 
   return {
