@@ -5,12 +5,14 @@ import Controls from './components/Controls.vue'
 import Log from './components/Log.vue'
 import Monster from './components/Monster.vue'
 import Player from './components/Player.vue'
-import { useGameStore } from '@/stores/game';
+import { useActionStore } from './stores/action'
+import { useGameStore } from './stores/game'
 
-const gameStore = useGameStore();
+const actionStore = useActionStore();
+const gameStore = useGameStore()
 
 onBeforeMount(() => {
-  gameStore.init();
+  actionStore.init();
 })
 
 </script>
