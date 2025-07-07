@@ -1,60 +1,69 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useActionStore } from './action'
+import Game from '@/classes/Game'
 
 export const useGameStore = defineStore('game', () => {
   const action = useActionStore()
-
-  const playerHealth = ref(100)
-  const monsterHealth = ref(100)
-  const currentRound = ref(0)
-  const winner = ref<null | string>(null)
-  const logMessages = ref<{ actionBy: string, actionType: string, actionValue: number }[]>([])
+  const game = Game.getInstance();
+  const gameData = reactive(game.data)
 
   const monsterBarStyle = computed(() => {
-    if (monsterHealth.value < 0) {
+    if (gameData.monsterHealth < 0) {
       return { width: '0%' }
     }
-    return { width: monsterHealth.value + '%' }
+    return { width: gameData.monsterHealth + '%' }
   })
 
   const playerBarStyle = computed(() => {
-    if (playerHealth.value < 0) {
+    if (gameData.playerHealth < 0) {
       return { width: '0%' }
     }
-    return { width: playerHealth.value + '%' }
+    return { width: gameData.playerHealth + '%' }
   })
 
   const mayUseSpecialAttack = computed(() => {
-    return currentRound.value % 3 !== 0
+    return gameData.currentRound % 3 !== 0
   })
 
-  watch(playerHealth, (val) => {
-    if (val <= 0 && monsterHealth.value <= 0) {
-      winner.value = 'draw'
+  watch(() => gameData.playerHealth, (val) => {
+    if (val <= 0 && gameData.monsterHealth <= 0) {
+      gameData.winner = 'draw'
     } else if (val <= 0) {
-      winner.value = 'monster'
+      gameData.winner = 'monster'
     }
-    action.saveData()
+    action.saveData();
+    game.updateData({ playerHealth: val, winner: gameData.winner });
+  }, { deep: true })
+
+  watch(() => gameData.monsterHealth, (val) => {
+    if (val <= 0 && gameData.playerHealth <= 0) {
+      gameData.winner = 'draw'
+    } else if (val <= 0) {
+      gameData.winner = 'player'
+    }
+    action.saveData();
+    game.updateData({ monsterHealth: val, winner: gameData.winner });
   })
 
-  watch(monsterHealth, (val) => {
-    if (val <= 0 && playerHealth.value <= 0) {
-      winner.value = 'draw'
-    } else if (val <= 0) {
-      winner.value = 'player'
-    }
-    action.saveData()
+  watch(() => gameData.currentRound, (val) => {
+    game.updateData({ currentRound: val })
   })
+
+  const resetData = () => {
+    gameData.playerHealth = 100;
+    gameData.monsterHealth = 100;
+    gameData.currentRound = 0;
+    gameData.winner = null;
+    gameData.logMessages = [];
+    game.resetData()
+  }
 
   return {
-    playerHealth,
-    monsterHealth,
-    currentRound,
-    winner,
-    logMessages,
+    gameData,
     monsterBarStyle,
     playerBarStyle,
     mayUseSpecialAttack,
+    resetData
   }
 })

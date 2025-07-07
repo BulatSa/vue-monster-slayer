@@ -24,7 +24,7 @@ onBeforeMount(() => {
   <div id="game">
     <Monster />
     <Player />
-    <Container v-if="gameStore.winner" />
+    <Container v-if="gameStore.gameData.winner" />
     <Controls v-else />
     <Log />
   </div>

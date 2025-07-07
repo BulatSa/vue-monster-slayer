@@ -15,11 +15,11 @@ export const useActionStore = defineStore('action', () => {
 
   function saveData() {
     const gameStore = {
-      playerHealth: game.playerHealth,
-      monsterHealth: game.monsterHealth,
-      currentRound: game.currentRound,
-      winner: game.winner,
-      logMessages: game.logMessages,
+      playerHealth: game.gameData.playerHealth,
+      monsterHealth: game.gameData.monsterHealth,
+      currentRound: game.gameData.currentRound,
+      winner: game.gameData.winner,
+      logMessages: game.gameData.logMessages,
     };
 
     localStorage.setItem("gameStore", JSON.stringify(gameStore))
@@ -28,11 +28,11 @@ export const useActionStore = defineStore('action', () => {
   function loadData() {
     const parsedGameStore = JSON.parse(localStorage.getItem('gameStore') || '')
 
-    game.playerHealth = parsedGameStore.playerHealth
-    game.monsterHealth = parsedGameStore.monsterHealth
-    game.currentRound = parsedGameStore.currentRound
-    game.winner = parsedGameStore.winner
-    game.logMessages = parsedGameStore.logMessages
+    game.gameData.playerHealth = parsedGameStore.playerHealth
+    game.gameData.monsterHealth = parsedGameStore.monsterHealth
+    game.gameData.currentRound = parsedGameStore.currentRound
+    game.gameData.winner = parsedGameStore.winner
+    game.gameData.logMessages = parsedGameStore.logMessages
   }
 
   function getRandomValue(min: number, max: number) {
@@ -40,48 +40,49 @@ export const useActionStore = defineStore('action', () => {
   }
 
   function startGame() {
-    game.playerHealth = 100
-    game.monsterHealth = 100
-    game.currentRound = 0
-    game.winner = null
-    game.logMessages = []
+    game.resetData();
   }
+
   function attackMonster() {
-    game.currentRound++
+    game.gameData.currentRound++
     const attackValue = getRandomValue(5, 12)
-    game.monsterHealth -= attackValue
+    game.gameData.monsterHealth -= attackValue
     addLogMessage('player', 'attack', attackValue)
     attackPlayer()
   }
 
   function attackPlayer() {
     const attackValue = getRandomValue(8, 15)
-    game.playerHealth -= attackValue
+    game.gameData.playerHealth -= attackValue
     addLogMessage('monster', 'attack', attackValue)
   }
+
   function specialAttackMonster() {
-    game.currentRound++
+    game.gameData.currentRound++
     const attackValue = getRandomValue(10, 25)
-    game.monsterHealth -= attackValue
+    game.gameData.monsterHealth -= attackValue
     addLogMessage('player', 'attack', attackValue)
     attackPlayer()
   }
+
   function healPlayer() {
-    game.currentRound++
+    game.gameData.currentRound++
     const healValue = getRandomValue(8, 20)
-    if (game.playerHealth + healValue > 100) {
-      game.playerHealth = 100
+    if (game.gameData.playerHealth + healValue > 100) {
+      game.gameData.playerHealth = 100
     } else {
-      game.playerHealth += healValue
+      game.gameData.playerHealth += healValue
     }
     addLogMessage('player', 'heal', healValue)
     attackPlayer()
   }
+
   function surrender() {
-    game.winner = 'monster'
+    game.gameData.winner = 'monster'
   }
+
   function addLogMessage(who: string, what: string, value: number) {
-    game.logMessages.unshift({
+    game.gameData.logMessages.unshift({
       actionBy: who,
       actionType: what,
       actionValue: value,

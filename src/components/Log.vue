@@ -2,7 +2,7 @@
   <section id="log" class="container">
     <h2>Battle Log</h2>
     <ul>
-      <li v-for="(logMessage, index) in gameStore.logMessages" :key="index">
+      <li v-for="(logMessage, index) in gameStore.gameData.logMessages" :key="index">
         <span
           :class="{
             'log--player': logMessage.actionBy === 'player',
